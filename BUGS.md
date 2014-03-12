@@ -4,10 +4,6 @@ Here are the bugs of the 2.0 Beta:
 * Do not use command blocks.
 * Do not think that I stole Arjay's code, mine is completely different (It would explain why it's broken :P)
 
-###2. Emerald ore does not drop emeralds when mined.
-* It is meant to drop emeralds.
-* It ignores the code.
-
 ###3. Hunger for one part is Tip Messages and the rest is Client Messages.
 * I have not finished temporary hunger display.
 
