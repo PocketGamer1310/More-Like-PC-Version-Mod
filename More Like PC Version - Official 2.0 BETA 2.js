@@ -336,7 +336,7 @@ function destroyBlock(x,y,z,s) {
   if(Level.getTile(x,y,z)==129) {
     Level.dropItem(x,y,z,388);
   } var blocky = Level.getTile(x,y,z);
-     if(brokensand==10&&blocky==12) {
+     else if(brokensand==10&&blocky==12) {
         Level.dropItem(x,y,z,0,349,1);
         brokensand = 0;
      } else if(blocky==12) {
