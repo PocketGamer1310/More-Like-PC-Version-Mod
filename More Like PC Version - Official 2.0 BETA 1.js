@@ -20,6 +20,7 @@ var cmdblocky = 0;
 var cmdblockz = 0;
 var cmdblockc = "";
 var output = "";
+var Foods = [393,279,391,366,350,320,357,322,396,360,282,392,349,400,363,365,349,319,260,367,364];
 
 //Blocks 
 function newLevel() {
@@ -476,32 +477,12 @@ function useItem(x,y,z, itemId,blockId,side) {
   } else if(blockId==137&&itemId==76) {
     commandBlockProcCmd(cmdblockc);
     preventDefault();
-  } switch(itemId) {
-  case '393':
-  case '297':
-  case '391':
-  case '366':
-  case '350':
-  case '320':
-  case '357':
-  case '322':
-  case '396':
-  case '360':
-  case '282':
-  case '392':
-  case '349':
-  case '400':
-  case '363':
-  case '365':
-  case '349':
-  case '319':
-  case '260':
-  case '367':
-  case '364':
-    countdown = countdown+6000;
-    removeitem = Player.getCarriedItem();
-    Player.addItemInventory(removeitem,-1);
-    break;
+  for(var f=0;Foods.length;f++) {
+    if(itemId==Foods[f]) {
+      countdown = countdown+6000;
+      removeitem = Player.getCarriedItem();
+      Player.addItemInventory(removeitem,-1);
+      }
     }
 }
 
