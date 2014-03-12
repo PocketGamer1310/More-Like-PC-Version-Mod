@@ -333,17 +333,19 @@ function entityAdded(entity) {
 
 //Other stuff
 function destroyBlock(x,y,z,s) {
-  if(Level.getTile(x,y,z)==129) {
+  var block = Level.getTile(x,y,z);
+  if(block==129) {
+    preventDefault();
+    Level.setTile(x,y,z,0)
     Level.dropItem(x,y,z,388);
-  } var blocky = Level.getTile(x,y,z);
-     else if(brokensand==10&&blocky==12) {
-        Level.dropItem(x,y,z,0,349,1);
-        brokensand = 0;
-     } else if(blocky==12) {
-        brokensand = brokensand +1;
-     } else if(blocky==73) {
-        Level.dropItem(x,y,z,0,55,6);
-      }
+  } else if(brokensand==10&&block==12) {
+    Level.dropItem(x,y,z,0,349,1);
+    brokensand = 0;
+  } else if(block==12) {
+    brokensand = brokensand +1;
+  } else if(block==73) {
+    Level.dropItem(x,y,z,0,55,6);
+    }
 }
   
 function deathHook(murderer,victim) {
