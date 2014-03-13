@@ -513,7 +513,7 @@ function error(err) {
   }}}));
 }
 
-
+/*
 function commandBlockProcCmd(cmd) {
   var data = cmd.split(" ");
   switch(data[0]) {
@@ -617,4 +617,4 @@ function commandBlockProcCmd(cmd) {
       }
     }
 }
-
+*/
