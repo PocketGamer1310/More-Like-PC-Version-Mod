@@ -479,7 +479,7 @@ function useItem(x,y,z, itemId,blockId,side) {
   } else if(blockId==137&&itemId==76) {
     commandBlockProcCmd(cmdblockc);
     preventDefault();
-  for(var f=0;Foods.length;f++) {
+  } for(var f=0;Foods.length;f++) {
     if(itemId==Foods[f]) {
       countdown = countdown+6000;
       removeitem = Player.getCarriedItem();
