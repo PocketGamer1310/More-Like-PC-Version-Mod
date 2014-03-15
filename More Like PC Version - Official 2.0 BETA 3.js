@@ -21,6 +21,7 @@ var cmdblockz = 0;
 var cmdblockc = "";
 var output = "";
 var Foods = [393,279,391,366,350,320,357,322,396,360,282,392,349,400,363,365,349,319,260,367,364];
+var nametag = "Name Tag";
 
 //Blocks 
 function newLevel() {
@@ -72,6 +73,7 @@ Block.defineBlock(133,"Emerald Block", ["emerald_block",0],1);
 Block.defineBlock(137,"Command Block", ["command_block",0]);
 Block.defineBlock(129,"Emerald Ore", ["emerald_ore",0]);
 Block.defineBlock(152,"Redstone Block",["redstone_block",0]);
+Block.defineBlock(145,"Anvil",["cauldron_inner",0]);
 Block.setShape(27,0,0,0,1,1/32,1);
 Block.setShape(28,0,0,0,1,1/32,1);
 Block.setShape(138,0,0,0,1,1/2,1);
@@ -138,6 +140,7 @@ ModPE.setFoodItem(382,"melon_speckled",0,4,"Glistering Melon");
 ModPE.setFoodItem(367,"rotten_flesh",0,1,"Rotten Flesh");
 ModPE.setItem(371,"gold_nugget",0,"Golden Nugget");
 ModPE.setItem(388,"emerald",0,"Emerald");
+ModPE.setItem(421,"name_tag",0,"Name Tag");
 ModPE.addCraftRecipe(322,1,0,[266,8,0,260,1,0]);
 ModPE.addCraftRecipe(321,1,9,[41,8,0,260,1,0]);
 ModPE.addCraftRecipe(23,1,0,[4,7,0,261,1,0,331,1,0]);
@@ -208,10 +211,11 @@ function procCmd(c) {
       break;
     } case 'info': {
       clientMessage("§8More Like PC Version");
-      clientMessage("§7Version: §81.4");
-      clientMessage("§7Upcoming: §82.0: Block generation,");
-      clientMessage("§8Proper hunger UI, Sorta caves,");
-      clientMessage("§8and more blocks! (WAY MORE)");
+      clientMessage("§7Version: §c2.0 Beta 3");
+      clientMessage("§7Upcoming: §82.0§7: §fBlock generation,");
+      clientMessage("§fProper hunger UI, Sorta caves,");
+      clientMessage("§fand more blocks! (WAY MORE)");
+      clientMessage("§4Please note: §cThis is an experimental beta, \n§cplease expect bugs.");
       clientMessage("§4Copyright PocketEdition_Miner.");
       clientMessage("§4DO NOT DISTRIBUTE.");
       break;
@@ -347,7 +351,50 @@ function destroyBlock(x,y,z,s) {
     Level.dropItem(x,y,z,0,55,6);
     }
 }
-  
+
+function anvil() {
+  var ctx = com.mojang.minecraftpe.MainActivity.currentMainActivity.get();
+    ctx.runOnUiThread(new java.lang.Runnable(){run: function(){
+      try{
+        var builder = new android.app.AlertDialog.Builder(ctx); 
+        builder.setTitle("Anvil"); 
+        builder.setMessage("Name an item! \nPlease note this is still experimental.");
+
+        var name = new android.widget.EditText(ctx); 
+        name.setHint("Example: §9Swanky Diamond"); 
+
+        builder.setView(name); 
+
+        builder.setPositiveButton("Done", new android.content.DialogInterface.OnClickListener(){
+          onClick: function(viewarg){
+            if(Player.getCarriedItem()==421) {
+              nametag = name.getText().toString();
+              ModPE.langEdit(ModPE.getItemName(Player.getCarriedItem(),0,true)+".name",name.getText().toString());
+              android.widget.Toast.makeText(ctx,"Done",0).show();
+            } else {
+              android.widget.Toast.makeText(ctx,"Done",0).show();
+              ModPE.langEdit(ModPE.getItemName(Player.getCarriedItem(),0,true)+".name",name.getText().toString());
+          }}});
+
+          builder.setNegativeButton("Cancel", new android.content.DialogInterface.OnClickListener(){ 
+            onClick: function(viewarg){
+          }});
+       
+          var dialog = builder.create();
+	      dialog.show();
+      
+    } catch(err){
+      error(err);
+  }}});
+}
+
+function startDestroyBlock(x,y,z,side) {
+  if(Level.getTile(x,y,z)==145) {
+    anvil();
+    preventDefault();
+    }
+}
+
 function deathHook(murderer,victim) {
    if(zdropingot==25&&Entity.getEntityTypeId(victim)==32) {
      Level.dropItem(Entity.getX(victim),Entity.getY(victim), Entity.getZ(victim),0,269,5);
@@ -360,6 +407,13 @@ function deathHook(murderer,victim) {
    } else if(Entity.getEntityTypeId(victim)==36) {
      zpdropcookie = zpdropcookie +1;
    }
+}
+
+function attackHook(attacker,victim) {
+  if(Player.getCarriedItem()==421&&victim!==Player.getEntity()&&nametag!=="Name Tag") {
+    Entity.setNameTag(victim,nametag);
+    preventDefault();
+    }
 }
 
 //Hunger
@@ -376,15 +430,19 @@ function modTick() {
   } else if(countdown==3125) {
     ModPE.showTipMessage("§eHunger: §c7/10");
   } else if(countdown==2875) {
-    clientMessage("§6♨♨♨§8♨♨");
+    ModPE.showTipMessage("§eHunger: §c6/10");
   } else if(countdown==2500) {
-    clientMessage("§6♨♨§c♨§8♨♨");
-  } else if(countdown==1500) {
-    clientMessage("§c♨♨§8♨♨♨");
-  } else if(countdown==1000) {
-    clientMessage("§c♨§8♨♨♨♨");
+    ModPE.showTipMessage("§eHunger: §c5/10");
+  } else if(countdown==1750) {
+    ModPE.showTipMessage("§eHunger: §c4/10");
+  } else if(countdown==1250) {
+    ModPE.showTipMessage("§eHunger: §c3/10");
+  } else if(countdown==750) {
+    ModPE.showTipMessage("§4Hunger: §c2/10");
   } else if(countdown==500) {
-    clientMessage("§0♨§8♨§0♨§8♨§0♨");
+    ModPE.showTipMessage("§4Hunger: §c1/10");
+  } else if(countdown==250) {
+    ModPE.showTipMessage("§8Hunger: §0EMPTY");
   } else if(countdown==0) {
     if(Level.getGameMode()==0) {
       Player.setHealth(0);
@@ -479,7 +537,7 @@ function useItem(x,y,z, itemId,blockId,side) {
   } else if(blockId==137&&itemId==76) {
     commandBlockProcCmd(cmdblockc);
     preventDefault();
-  } for(var f=0;Foods.length;f++) {
+  } for(var f=0;f > Foods.length;f++) {
     if(itemId==Foods[f]) {
       countdown = countdown+6000;
       removeitem = Player.getCarriedItem();
