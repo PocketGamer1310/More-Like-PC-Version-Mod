@@ -1,3 +1,7 @@
+
+
+/* This mod is made by PocketEdition-Miner
+Do not distribute! */
 //Var
 var cleartimer = 80;
 var countdown = 6000;
