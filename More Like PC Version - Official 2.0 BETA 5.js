@@ -1,10 +1,9 @@
-
-
 /* This mod is made by PocketEdition-Miner
 Do not distribute! */
+
 //Var
 var cleartimer = 80;
-var countdown = 6000;
+var countdown = 12000;
 var hungerallowed = true;
 var zdropingot = 0;
 var zpdropcookie = 0;
@@ -29,27 +28,8 @@ var nametag = "Name Tag";
 
 //Blocks 
 function newLevel() {
-if(Level.getGameMode()==0) {
-    var ctx = com.mojang.minecraftpe.MainActivity.currentMainActivity.get();
-      ctx.runOnUiThread(new java.lang.Runnable(){run: function(){
-        try{
-          var directory = new android.graphics.BitmapFactory.decodeFile("/games/com.mojang/morelikepctextures/hunger/fullhunger.png"); 
-          var img = new android.graphics.drawable.BitmapDrawable(directory); 
-          var hunger1 = new android.widget.ImageView(ctx);  
-          hunger1.setImageBitmap(img);
-
-          var hungerWindow = new android.widget.PopupWindow();
-          hungerWindow.setTouchable(false);
-          hungerWindow.setWidth(android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
-          hungerWindow.setHeight(android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT);
-          hungerWindow.setBackgroundDrawable(new android.graphics.Drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
-          hungerWindow.showAtLocation(ctx.getWindow.getDecorView(), android.view.Gravity.TOP | android.view.Gravity.CENTER);
-        } catch(err) {
-          error(err);
-      }}});
-    }
-ModPE.showTipMessage("§7Notice: §8Custom blocks are still under testing.");
-ModPE.showTipMessage("§8Reporting bugs would be awesome.");
+clientMessage("§7Notice: §8Custom blocks are still under testing.");
+clientMessage("§8Reporting bugs would be awesome.");
 Block.defineBlock(23,"Dispenser",[["furnace",3],["furnace",3],["piston_inner",0],["furnace",2],["furnace",2],["furnace",2]],1);
 Block.defineBlock(25,"Note Block",["jukebox_side",0],1);
 Block.defineBlock(28,"Detector Rail",["rail_detector",0],2);
@@ -67,7 +47,7 @@ Block.defineBlock(100,"Giant Brown Mushroom",["mushroom_block_skin_brown",0],2);
 Block.defineBlock(106,"Vines",["vine",0],3,false,13);
 Block.defineBlock(110,"Mycelium",[["dirt",0], ["mycelium_top",0], ["mycelium_side",0],["mycelium_side",0],["mycelium_side",0], ["mycelium_side",0]],1); 
 Block.defineBlock(120,"End Portal",[["endstone",0],["end_portal_top",0],["end_portal_side",0],["end_portal_side",0],["end_portal_side",0], ["end_portal_side",0]],0);
-Block.defineBlock(121,"End Stone",["end_stone",0]);
+Block.defineBlock(121,"End Stone",["endstone",0]);
 Block.defineBlock(75,"Redstone Torch",["redstone_torch_off",0],2, false,2);
 Block.defineBlock(76,"Redstone Torch",["redstone_torch_on",0],2, false,2);
 //Block.defineBlock(159,"Stained Glass",["glass",0],0, false,13);
@@ -128,8 +108,6 @@ Block.setRenderLayer(27,1);
 Block.setRenderLayer(28,1);
 Block.setRenderLayer(66,1);
 Block.setRenderLayer(79,2);
-Block.setRenderLayer(76,1);
-Block.setRenderLayer(75,1);
 Block.setRenderLayer(55,1);
 Block.setRenderLayer(101,1);
 Block.setColor(55,[0xCC0000]);
@@ -145,7 +123,7 @@ ModPE.setFoodItem(367,"rotten_flesh",0,1,"Rotten Flesh");
 ModPE.setItem(371,"gold_nugget",0,"Golden Nugget");
 ModPE.setItem(388,"emerald",0,"Emerald");
 ModPE.setItem(421,"name_tag",0,"Name Tag");
-ModPE.addCraftRecipe(322,1,0,[266,8,0,260,1,0]);
+/* ModPE.addCraftRecipe(322,1,0,[266,8,0,260,1,0]);
 ModPE.addCraftRecipe(321,1,9,[41,8,0,260,1,0]);
 ModPE.addCraftRecipe(23,1,0,[4,7,0,261,1,0,331,1,0]);
 ModPE.addCraftRecipe(29,1,0,[33,1,0,341,1,0]);
@@ -158,7 +136,8 @@ ModPE.addCraftRecipe(266,1,0,[371,9,0]);
 ModPE.addCraftRecipe(382,1,0,[360,1,0,371,8,0]);
 ModPE.addCraftRecipe(133,1,0,[388,1,0]);
 ModPE.addFurnaceRecipe(349,350,0);
-Player.addItemCreativeInv(88,1);
+*/
+//Craft and smelt recipes currently broken
 }
 
 //Script
@@ -215,11 +194,11 @@ function procCmd(c) {
       break;
     } case 'info': {
       clientMessage("§8More Like PC Version");
-      clientMessage("§7Version: §c2.0 Beta 3");
+      clientMessage("§7Version: §c2.0 Beta 5");
       clientMessage("§7Upcoming: §82.0§7: §fBlock generation,");
       clientMessage("§fProper hunger UI, Sorta caves,");
       clientMessage("§fand more blocks! (WAY MORE)");
-      clientMessage("§4Please note: §cThis is an experimental beta, \n§cplease expect bugs.");
+      clientMessage("§4Please note: Â§cThis is an experimental beta, \n§cplease expect bugs.");
       clientMessage("§4Copyright PocketEdition_Miner.");
       clientMessage("§4DO NOT DISTRIBUTE.");
       break;
@@ -241,7 +220,7 @@ function procCmd(c) {
       } else if(data[1]==3) {
         clientMessage("§2--- Showing help page 3 of 3 (/help <page>) ---");
         clientMessage("§f/tp <x> <y> <z>");
-        clientMessage("§4/gamerule §8Work In Progress");
+        clientMessage("§f/say <message>");
       } else {
         clientMessage("§2--- Showing help page 1 of 3 (/help <page>) ---");
         clientMessage("§f/gamemode <mode>");
@@ -319,21 +298,23 @@ function procCmd(c) {
         }
       break;
     } case 'tp': {
-      Entity.setPosition(getPlayerEnt(),data[1], data[2], data[3]);
-      clientMessage("Teleported "+Player.getName(Player.getEntity())+"  to "+data[1]+","+data[2]+","+data[3]+"");
+      if(data[1]==undefined||data[2]==undefined||data[3]==undefined) {
+        clientMessage("§cUsage: /tp <x> <y> <z>");
+      } else {
+        Entity.setPosition(getPlayerEnt(),data[1], data[2], data[3]);
+        clientMessage("Teleported "+Player.getName(Player.getEntity())+"  to "+data[1]+","+data[2]+","+data[3]);
+        }
       break;
-    } case 'gamerule': {
-      print("wip");
+    } case 'say': {
+      if(data[1]==undefined) {
+        clientMessage("§cUsage: /say <message>");
+      } else {
+        clientMessage("["+Player.getName(getPlayerEnt())+"] "+data.slice(1).join(" "));
+        }
       break;
+    } case 'scoreboard': {
+      ModPE.showTipMessage("Please await the 2.0 beta 6 for this addition.");
       }
-    }
-}
-
-function entityAdded(entity) {
-  if(entity==getPlayerEnt()) {
-    ModPE.showTipMessage("§6Notice > §7Custom blocks are under testing. \n§8Report bugs you find.");
-  } else {
-    Entity.setHealth(entity,20);
     }
 }
 
@@ -356,6 +337,7 @@ function destroyBlock(x,y,z,s) {
     }
 }
 
+//Anvils
 function anvil() {
   var ctx = com.mojang.minecraftpe.MainActivity.currentMainActivity.get();
     ctx.runOnUiThread(new java.lang.Runnable(){run: function(){
@@ -392,24 +374,22 @@ function anvil() {
   }}});
 }
 
-function startDestroyBlock(x,y,z,side) {
-  if(Level.getTile(x,y,z)==145) {
-    anvil();
-    preventDefault();
-    }
-}
-
 function deathHook(murderer,victim) {
-   if(zdropingot==25&&Entity.getEntityTypeId(victim)==32) {
+   if(zdropingot==120&&Entity.getEntityTypeId(victim)==32) {
      Level.dropItem(Entity.getX(victim),Entity.getY(victim), Entity.getZ(victim),0,269,5);
      zdropingot = 0;
    } else if(Entity.getEntityTypeId(victim)==32) {
      zdropingot = zdropingot +1;
-   } else if(zpdropcookie==2&&Entity.getEntityTypeId(victim)==36) {
-     Level.dropItem(Entity.getX(victim),Entity.getY(victim),Entity.getZ(victim),0,358,5);
-     zpdropcookie = 0;
-   } else if(Entity.getEntityTypeId(victim)==36) {
-     zpdropcookie = zpdropcookie +1;
+   } else if(Entity.getEntityTypeId(murderer)==32&&victim==getPlayerEnt()) {
+     clientMessage(Player.getName(getPlayerEnt())+" was slain by Zombie");
+   } else if(Entity.getEntityTypeId(murderer)==33&&victim==getPlayerEnt()) {
+     clientMessage(Player.getName(getPlayerEnt())+" was blown up by Creeper");
+   } else if(Entity.getEntityTypeId(murderer)==34&&victim==getPlayerEnt()) {
+     clientMessage(Player.getName(getPlayerEnt())+" was shot by Skeleton");
+   } else if(Entity.getEntityTypeId(murderer)==35&&victim==getPlayerEnt()) {
+     clientMessage(Player.getName(getPlayerEnt())+" was slain by Spider");
+   } else if(Entity.getEntityTypeId(murderer)==36&&victim==getPlayerEnt()) {
+     clientMessage(Player.getName(getPlayerEnt())+" was slain by Zombie Pigman");
    }
 }
 
@@ -425,33 +405,33 @@ function modTick() {
   countdown--;
   if(Level.getGameMode()==1||hungerallowed==false) {
     countdown = 6002;
-  } else if(countdown==6000) {
+  } else if(countdown==12000) {
     ModPE.showTipMessage("§eHunger: §c10/10");
-  } else if(countdown==4000) {
+  } else if(countdown==8000) {
     ModPE.showTipMessage("§eHunger: §c9/10");
-  } else if(countdown==3500) {
+  } else if(countdown==7000) {
     ModPE.showTipMessage("§eHunger: §c8/10");
-  } else if(countdown==3125) {
+  } else if(countdown==6250) {
     ModPE.showTipMessage("§eHunger: §c7/10");
-  } else if(countdown==2875) {
+  } else if(countdown==5750) {
     ModPE.showTipMessage("§eHunger: §c6/10");
-  } else if(countdown==2500) {
+  } else if(countdown==5000) {
     ModPE.showTipMessage("§eHunger: §c5/10");
-  } else if(countdown==1750) {
+  } else if(countdown==3500) {
     ModPE.showTipMessage("§eHunger: §c4/10");
-  } else if(countdown==1250) {
+  } else if(countdown==2500) {
     ModPE.showTipMessage("§eHunger: §c3/10");
-  } else if(countdown==750) {
+  } else if(countdown==1500) {
     ModPE.showTipMessage("§4Hunger: §c2/10");
-  } else if(countdown==500) {
+  } else if(countdown==1000) {
     ModPE.showTipMessage("§4Hunger: §c1/10");
-  } else if(countdown==250) {
+  } else if(countdown==500) {
     ModPE.showTipMessage("§8Hunger: §0EMPTY");
   } else if(countdown==0) {
     if(Level.getGameMode()==0) {
       Player.setHealth(0);
       clientMessage(Player.getName(getPlayerEnt())+" starved to death");
-      countdown = countdown+6000;
+      countdown = countdown+12000;
       }
     }
 }
@@ -490,7 +470,7 @@ function useItem(x,y,z, itemId,blockId,side) {
           edittext.setText(cmdblockc);
 
           var note = new android.widget.TextView(ctx);
-          note.setText("WARNING: Do not use a / in the beginning of the \ncommand!");
+          note.setText("WARNING: Do not use a / in the beginning of the command!\n\nCommand Blocks are currently broken, sorry!");
           note.setTextColor(android.graphics.Color.RED);
           note.setTextSize(20);
 
@@ -521,8 +501,9 @@ function useItem(x,y,z, itemId,blockId,side) {
               if(edittext.getText().toString()=="") {
                 android.widget.Toast.makeText(ctx,"Please fill in a command first.",0).show();
               } else {
-                android.widget.Toast.makeText(ctx,"Set console command to "+edittext.getText().toString(),0).show();
-                cmdblockc = edittext.getText();
+                error("Command Block function is currently broken, do not use this. Please try the other features of this mod.");
+                /* android.widget.Toast.makeText(ctx,"Set console command to "+edittext.getText().toString(),0).show();
+                cmdblockc = edittext.getText(); */
                 }
             }});
 
@@ -575,108 +556,3 @@ function error(err) {
   }}}));
 }
 
-/*
-function commandBlockProcCmd(cmd) {
-  var data = cmd.split(" ");
-  switch(data[0]) {
-    case 'help': {
-      if(data[1]==1) {
-        clientMessage("§2--- Showing help page 1 of 3 (/help <page>) ---");
-        clientMessage("§f/gamemode <mode>");
-        clientMessage("§f/give <item> <amount>");
-        clientMessage("§f/help <page>");
-        clientMessage("§f/kill");
-        clientMessage("§f/me <action>");
-      } else if(data[1]==2) {
-        clientMessage("§2--- Showing help page 2 of 3 (/help <page>) ---");
-        clientMessage("§f/playsound <noise> <volume>");
-        clientMessage("§f/setblock <x> <y> <z> <tileid> ");
-        clientMessage("§f/spawnpoint");
-        clientMessage("§f/summon <entityid> <mobfolderskin>");
-        clientMessage("§f/time <set> <time>");
-      } else if(data[1]==3) {
-        clientMessage("§2--- Showing help page 3 of 3 (/help <page>) ---");
-        clientMessage("§f/tp <x> <y> <z>");
-        clientMessage("§4/gamerule §8Work In Progress");
-      } else {
-        clientMessage("§2--- Showing help page 1 of 3 (/help <page>) ---");
-        clientMessage("§f/gamemode <mode>");
-        clientMessage("§f/give <item> <amount>");
-        clientMessage("§f/help <page>");
-        clientMessage("§f/kill");
-        clientMessage("§f/me <action>");
-        }
-      break;
-    } case 'gamemode': {
-      if(data[1]==undefined) {
-        output = "Usage: /gamemode <mode>";
-      } else if(data[1]=="1"||data[1]=="0") {
-        Level.setGameMode(data[1]);
-        clientMessage("Your gamemode has been updated");
-        }
-      break;
-    } case 'give': {
-      if(data[1]==undefined||data[2]==undefined) {
-        output = "Usage: /give <item> <amount>";
-      } else {
-        Player.addItemInventory(data[1],data[2]);
-        clientMessage("Given ["+data[1]+"] * "+data[2]+" to "+Player.getName(getPlayerEnt()));
-        }
-      break;
-    } case 'me': {
-      if(data[1]==undefined) {
-        output = "Usage: /me <action>";
-      } else {
-        clientMessage("* @ "+data.slice(1).join(" "));
-        }
-      break;
-    } case 'playsound': {
-      if(data[1]==undefined||data[2]==undefined||data[3]==undefined) {
-        output = "Usage: /playsound <soundname> <volume> <pitch>";
-      } else {
-        Level.playSound(Player.getX(),Player.getY(),Player.getZ(),""+data[1]+"",data[2],data[3]);
-        clientMessage("Played sound "+data[1]+" to "+Player.getName(getPlayerEnt()));
-        }
-      break;
-    } case 'setblock': {
-      if(data[1]==undefined||data[2]==undefined||data[3]==undefined||data[4]==undefined) {
-        output = "Usage: /setblock <x> <y> <z> <tileid>";
-      } else {
-        Level.setTile(data[1],data[2],data[3],data[4]);
-        clientMessage("Block placed");
-        }
-      break;
-    } case 'spawnpoint': {
-      Level.setSpawn(Player.getX(), Player.getY(), Player.getZ());
-      var PX = Player.getX();
-      var PY = Player.getY();
-      var PZ = Player.getZ();
-      clientMessage("Set the spawn point to ("+PX+","+PY+","+PZ+")");
-      break;
-    } case 'summon': {
-      if(data[1]==undefined||data[2]==undefined) {
-        output = "Usage: /summon <entityid> <mobfolderskin>";
-      } else {
-        Level.spawnMob(Player.getX(), Player.getY(), Player.getZ(),data[1],"mob/"+data[2]+"");
-        clientMessage("Object sucessfully summoned");
-        }
-      break;
-    } case 'time': {
-      if(data[1]==undefined||data[2]==undefined) {
-        clientMessage("§cUsage: /time <set> <time>");
-      } else {
-        Level.setTime(data[2]);
-        clientMessage("Set the time to "+data[2]+"");
-        }
-      break;
-    } case 'tp': {
-      Entity.setPosition(getPlayerEnt(),data[1], data[2], data[3]);
-      clientMessage("Teleported "+Player.getName(Player.getEntity())+"  to "+data[1]+","+data[2]+","+data[3]+"");
-      break;
-    } case 'gamerule': {
-      print("wip");
-      break;
-      }
-    }
-}
-*/
