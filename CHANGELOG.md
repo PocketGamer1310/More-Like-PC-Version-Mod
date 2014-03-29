@@ -12,5 +12,10 @@ The current 2.0 beta changelog:
 * Fixed for() statement
 * Food is now eatable with useItem
 * Added entity renaming
+* Added death messages
+* Removed cookie drops
+* Made getting iron ingots rare, like on MCPC
+* Added /say command
+* Blocked command block usage
 
 ###Check the thread for what will be to come!
